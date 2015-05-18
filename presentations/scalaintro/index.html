@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Why Scala is Awesome</title>
+
+		<meta name="description" content="A short introduction to why Scala is awsome and people should us it for stuff">
+		<meta name="author" content="Michael Thorsley">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/beige.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h1>Why Scala is Awesome</h1>
+					<p>(And why you should use it for stuff)</p>
+					
+				</section>
+
+				<section>
+					<section>
+						<h2>Scala's raisons d'être</h2>
+					<ul>
+					<li>The need to write programs that can take advantage of large-scale concurrency has created a renewed interest in pure functional programming</li>
+					<li>In particular, data structures used to avoid mutable state in functional programming languages, are also greatly useful in concurrent environments</li>
+					<li>Much improved type inference can allow for a much more sophisticated type system without it becoming a burden on the developer</li>
+					<li>Compiling to the JVM gives easy interoperability with the Java ecosystem</li>
+					</ul>
+					</section>
+					
+					<section>
+						<h2>Functional Programming</h2>
+						
+						<p>Functional programming is a programming paradigm based on the composition of <em>referentially transparent</em> functions.</p>
+						
+						<p>A function being <em>referentially transparent</em> means that any particular function call can at any time be replaced with the result of the call
+						without any important part of the program being made incorrect.  In particular this means that the entire behaviour of the function is to compute and
+						return a result.  Side-effects are not allowed.</p>
+						
+						<p>This property means that the particular sequence function calls are made in is not important, which gives the runtime system a great deal of
+						flexibility to reorder operations to take advantage of idle cores.</p>
+						
+						<p>Scala does not <strong>force</strong> you to code in this way, but it makes it "the easy thing to do".</p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Cosmetics</h2>
+						<p>a.k.a. "Stuff that Scala does differently, but that is not really new and interesting"</p>
+					</section>
+					
+					<section>
+						<h2>Hipster Syntax (1)</h2>
+						<p>Every other language uses [] for indexing into an array</p>
+						
+						<pre><code class="java" data-trim>
+final int[] a = {1, 2, 3};
+int x = a[1];
+						</code></pre>
+						
+						<p>But Scala uses ()</p>
+						
+						<pre><code class="scala" data-trim>
+val a = Array(1,2,3)
+int x = a(1)
+						</code></pre>
+						
+						<p><small>(this is because an array can be used as a function)</small><p>
+					</section>
+					
+					<section>
+						<h2>Hipster Syntax (2)</h2>
+						<p>Every other language uses &lt;&gt; for template/generic classes</p>
+						
+						<pre><code class="java" data-trim>
+final Set&lt;Integer&gt s = new HashSet&lt;Integer&gt;();
+						</code></pre>
+						
+						<p>But Scala uses []</p>
+						
+						<pre><code class="scala" data-trim>
+val s = Set[Int]()
+						</code></pre>
+					</section>
+					
+					
+					<section>
+						<h2>Hipster Syntax (3)</h2>
+						<p>Every other (statically typed) language gives the type <em>before</em> the variable name</p>
+						
+						<pre><code class="java" data-trim>
+final int x = 5
+						</code></pre>
+						
+						<p>But Scala puts it <em>after</em></p>
+						
+						<pre><code class="scala" data-trim>
+val x:Int = 5
+						</code></pre>
+						
+						<p>But thanks to type inference, Scala rarely needs to say it explicitly at all!</p>
+						
+						<pre><code class="scala" data-trim>
+val x = 5
+						</code></pre>
+						
+						<p><small>(What is the type of <i>x</i>?  I just initialized it to <i>5</i> -- figure it out!)</small></p>
+						
+					</section>
+					
+					<section>
+						<h2>vals, vars, and defs</h2>
+						
+						<ul>
+						<li>A val is a value that can not be changed after initialization (what we normally think of as a constant)</li>
+						<li>A var is a variable than can be changed after initialization (what we normally think of as a variable)</li>
+						<li>A def is evaluated each time it is accesssed and can have parameters (what we normally think of as a function)</li>
+						</ul>
+						
+						<p><small>(In functional style, vars are never used)</small></p>
+					</section>
+					
+					<section>
+						<h2>Scala Methods</h2>
+						
+						<p>When there is a single parameter, Scala method calls can omit the dot and parentheses</p>
+						
+						<pre><code class="scala" data-trim>
+x.foo(y)
+x foo y // Exactly the same thing
+						</code></pre>
+						
+						<p>In addition, Scala methods can have symbols as names</p>
+						
+						<pre><code class="scala" data-trim>
+x * y
+x.*(y) // Exactly the same thing
+						</code></pre>
+						
+						Between these two things, we basically get operator overloading for free
+					</section>
+					
+					<section>
+						<h2>Scala classes</h2>
+						
+						<p>A simple Scala class:</p>
+						
+						<pre><code class="scala" data-trim>
+class Point(xx:Int, yy:Int) {
+val x = xx
+val y = yy
+def squaredDistanceFrom(pt:Point):Int = {
+  val dx = pt.x - xx
+  val dy = pt.y - yy
+  dx * dx + dy * dy
+  }
+}
+						</code></pre>
+						
+						<ul>
+						<li>The constructor parameters are tied up into the class declaration, and the entire body of the class is the constructor</li>
+						<li>There is no return statement in the one method -- the return value is just the last statement</li>
+						</ul>
+					</section>
+					
+					<section>
+						<p>Making a val that is exactly equal to a constructor parameter is so common that there is a an
+						abbreviated syntax for it</p>
+						<pre><code class="scala" data-trim>
+class Point(val x:Int, val y:Int) {
+def squaredDistanceFrom(pt:Point):Int = {
+  val dx = pt.x - x
+  val dy = pt.y - y
+  dx * dx + dy * dy
+  }
+}
+						</code></pre>
+						
+						<p>Putting the keyword "case" in front of a class makes the compiler generator make a useful default equals(), hashCode, toString(), and a bunch
+						of other useful functionality (as well as a getter for each constructor parameter)</p>						
+					</section>
+					
+				</section>
+
+				<section>
+					<section>
+					<h2>Features</h2>
+					<p>(a.k.a. Things Scala does that are new and interesting)</p>
+					</section>
+					
+					<section>
+					<h2>Functional Statements</h2>
+					<p>In Scala, there are no statements that don't return <em>something</em>.</p>
+					</section>
+					
+					<section>
+					<h2>Pattern Matching</h2>
+					</section>
+				</section>
+
+				<section>
+					<section>
+					<h2>Conventions</h2>
+					<p>(a.k.a. Things Scala developers do that are new and interesting)</p>
+					</section>
+					
+					<section>
+					<h2>Avoiding null</h2>
+					<p>While Scala objects, like Java objects, can be null, it is frowned upon to use null for anything in a Scala program.  Instead, the Option[T] and
+					Either[T, U] class hierarchies are provided</p>
+					</section>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
