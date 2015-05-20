@@ -81,7 +81,7 @@
 					</section>
 					
 					<section>
-						<h2>Hipster Syntax (1)</h2>
+						<h2>Hipster Syntax<sup>*</sup> (1)</h2>
 						<p>Every other language uses [] for indexing into an array</p>
 						
 						<pre><code class="java" data-trim>
@@ -96,7 +96,9 @@ val a = Array(1,2,3)
 int x = a(1)
 						</code></pre>
 						
-						<p><small>(this is because an array can be used as a function)</small><p>
+						<p><small>(this is because an array can be used as a function from Int to whatever it is an array of)</small><p>
+						
+						<aside style="text-align:right"><small><i>*Odersky's term, not mine</i></small></aside>
 					</section>
 					
 					<section>
@@ -172,6 +174,19 @@ x.*(y) // Exactly the same thing
 					</section>
 					
 					<section>
+						For methods that don't take any arguments, parentheses are optional
+						
+						<pre><code class="scala" data-trim>
+def speak() = "woof"
+speak()  // "woof"
+speak    // Just as "woof"
+						</code></pre>
+						
+						<p>By convention, parentheses are omitted if and only if the method has no side-effects</p>
+						
+					</section>
+					
+					<section>
 						<h2>Scala classes</h2>
 						
 						<p>A simple Scala class:</p>
@@ -211,21 +226,35 @@ def squaredDistanceFrom(pt:Point):Int = {
 						of other useful functionality (as well as a getter for each constructor parameter)</p>						
 					</section>
 					
-				</section>
-
-				<section>
 					<section>
-					<h2>Features</h2>
-					<p>(a.k.a. Things Scala does that are new and interesting)</p>
+						<h2>Singleton Objects</h2>
+						
+						<p>A class that can only have one instance can be declared as an object instead</p>
+						
+						<pre><code class="scala" data-trim>
+object Database {
+  def connect() = ...
+  def getAllRecords : List[Record] = ...
+}
+						</code></pre>
+						
+						<p>Static methods are not supported, but singleton objects with the same name as a class can be used for the same functionality</p>
 					</section>
 					
 					<section>
-					<h2>Functional Statements</h2>
-					<p>In Scala, there are no statements that don't return <em>something</em>.</p>
-					</section>
-					
-					<section>
-					<h2>Pattern Matching</h2>
+						<h2>Traits</h2>
+						
+						<p>Traits are like interfaces, except that they can have some method implementations on them (which makes the distinction between
+						traits and abstract classes much more subtle)</p>
+						
+						<pre><code class="scala" data-trim>
+trait Animal {
+  def move()
+  def speak:String
+  def yell = speak.toUpperCase + "!!!"
+}
+						</code></pre>
+						
 					</section>
 				</section>
 
@@ -239,10 +268,113 @@ def squaredDistanceFrom(pt:Point):Int = {
 					<h2>Avoiding null</h2>
 					<p>While Scala objects, like Java objects, can be null, it is frowned upon to use null for anything in a Scala program.  Instead, the Option[T] and
 					Either[T, U] class hierarchies are provided</p>
+					
+					<pre><code class="scala" data-trim>
+def realSqrt(x:Double):Option[Double] = 
+		if (x >= 0) Some(java.lang.Math.sqrt(x)) else None
+realSqrt(16)   // Some(4.0)
+realSqrt(-16)  // None
+					</code></pre>
 					</section>
+					
+					<section>
+					<h2>Avoiding exceptions</h2>
+					<p>While Scala functions can throw exceptions, it is better to return a Try[T] instance
+					<pre><code class="scala" data-trim>
+import scala.util._
+def realSqrt2(x:Double):Try[Double] = 
+		if (x >= 0) Success(java.lang.Math.sqrt(x)) 
+		else Failure(new Exception("x is negative"))
+realSqrt2(16)  // Success(4.0)
+realSqrt2(-16) // Failure(java.lang.Exception: x is negative)
+					</code></pre>
+					
+					<p>That way the possibility of failure is encoded in the return type, which is a little more honest than a hidden throw</p>
+					</section>
+					
+					
+				</section>
+
+				<section>
+					<section>
+					<h2>Features</h2>
+					<p>(a.k.a. Things Scala does that are new and interesting)</p>
+					</section>
+					
+					<section>
+					<h2>Functional Statements</h2>
+					<p>In Scala, there are no statements that don't return <em>something</em>, so even statements that
+					are "flow control" in other languages are function calls in Scala</p>
+					
+					<pre><code class="scala" data-trim>
+val x = 5
+val y = 7
+val z = if (x > y) "bigger" else "not bigger" // z == "not bigger"
+val u = for (j <- x to y) yield j * j * j  /// u == Vector(125, 216, 343)
+					</code></pre>
+					
+					<p><small><i>(Of course there are boring functions that just return Unit, but those aren't new and interesting)</i></small></p>
+					</section>
+					
+					<section>
+					<h2>Pattern Matching</h2>
+					
+					<p>Certain types can be pattern matched</p>
+					
+					<pre><code class="scala" data-trim>
+def matchExample(opt:Option[Double]) = opt match {
+  case Some(6) => "Six"
+  case Some(x) => "Not six (" + x + " btw)"
+  case None => "Nothing"
+}                                                 
+matchExample(realSqrt(36))   // "Six"
+matchExample(realSqrt(25))   // "Not six (5.0 btw)"
+matchExample(realSqrt(-36))  // "Nothing"
+					</code></pre>
+					
+					</section>
+					
+					<section>
+					
+					<p>Pattern matches can be nested</p>
+					
+					
+					<pre><code class="scala" data-trim>
+def matchExample2(tryOpt:Try[Option[Double]]) = tryOpt match {
+  case Success(Some(6)) => "Six"
+  case Success(Some(_)) => "Not six"
+  case Success(None) => "Nothing"
+  case Failure(e) => "Failed with message: " + e.getMessage
+} 
+					</code></pre>
+					
+					</section>
+					
+					<section>
+					
+					<p>And using case classes you can build your own matchable class hierarchies</p>
+					
+					<pre><code class="scala" data-trim>
+sealed trait Penguin
+case class Emperor(height:Double) extends Penguin
+case class Jackass(annoying:Boolean) extends Penguin
+case object Adelie extends Penguin
+
+def penguinMatch(p:Penguin) = p match {
+  case Emperor(height) => "An Emperor Penguin of height " + height + "m."
+  case Adelie => "A plain old Adelie penguin"
+  case Jackass(true) => "An annoying Jackass Penguin"
+  case Jackass(false) => "A pleasant Jackass Penguin"
+}   
+					</code></pre>
+					
+					<p><small>Class hierarchies of this type fill some of the roles of enums, and some of the roles of <i>algebraic data types</i>
+					which are not very well used outside of functional languages</small></p>
+					
+					</section>
+					
 				</section>
 			</div>
-
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
