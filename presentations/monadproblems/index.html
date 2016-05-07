@@ -163,6 +163,42 @@ noEscape(x).flatMap(escapeFuntion) == escapeFuntion(s)
 					<section>
 						<h1>Monady Goodness</h1>
 					</section>
+
+					<section>
+						<h3>Definition</h3>
+						<p>A Monad comprises three components:</p>
+						<ul>
+							<li>A type constructor (aka a parameterized type), M[_].  M is
+							  called the <i>Monadic type</i>, while its parameter is
+							  called the <i>base type</i>.
+							</li>
+							<li>A function (called unit, or pure, or return) that takes an
+								element of the underlying type and returns an element of the
+								monadic type.  I.e. it has signature T =&gt; M[T]
+							</li>
+							<li>A function (called flatMap, or bind, or &gt;&gt;=) that takes
+								an element of the monadic type, and a <i>function</i> from the
+								base type to the monadic type, and produces another element
+								of the monadic type.  I.e. it has signature
+								(T, T =&gt; M[T]) =&gt; T.
+							</li>
+						</ul>
+					</section>
+
+					<section>
+					</section>
+					<section>
+					</section>
+					<section>
+					</section>
+					<section>
+					</section>
+					<section>
+					</section>
+					<section>
+					</section>
+					<section>
+					</section>
 				</section>
 
 				<section>
