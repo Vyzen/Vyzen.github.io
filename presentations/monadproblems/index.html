@@ -166,31 +166,110 @@ noEscape(x).flatMap(escapeFuntion) == escapeFuntion(s)
 
 					<section>
 						<h3>Definition</h3>
-						<p>A Monad comprises three components:</p>
+						<p>A Monad defines a specific relationship between two types,
+							a <i>base type</i> and a <i>monadic type</i>
+						</p>
 						<ul>
-							<li>A type constructor (aka a parameterized type), M[_].  M is
-							  called the <i>Monadic type</i>, while its parameter is
-							  called the <i>base type</i>.
+							<li>
+								In the previous example, the base type is "Char", and the
+								monadic type is "String"
 							</li>
-							<li>A function (called unit, or pure, or return) that takes an
-								element of the underlying type and returns an element of the
-								monadic type.  I.e. it has signature T =&gt; M[T]
+							<li>
+								Typically the monadic type will be parametric on the base type.
+								E.g. <code>List[T]</code> is monadic on <code>T</code>.
+								Collections on the base type are typical monads.
 							</li>
-							<li>A function (called flatMap, or bind, or &gt;&gt;=) that takes
-								an element of the monadic type, and a <i>function</i> from the
-								base type to the monadic type, and produces another element
-								of the monadic type.  I.e. it has signature
-								(T, T =&gt; M[T]) =&gt; T.
+							<li>
+								The relationship between the base type and the monadic type
+								is codified in two functions.
 							</li>
 						</ul>
 					</section>
 
 					<section>
+						<h3>unit (a.k.a. pure, a.k.a. return)</h3>
+						<p>This is a function that takes an element of the base type,
+							and produces a "default" element of the monadic type
+						</p>
+						<ul>
+							<li>In the previous example, this role was filled by
+								<code>noEscape</code>, which takes a Char and returns
+								the single-character String containing that Char.
+							</li>
+							<li>This is typical for "container" monads -- unit(x) is a
+								singleton container containing only x.
+							</li>
+						</ul>
 					</section>
+
 					<section>
+						<h3>flatMap (a.k.a. bind, a.k.a. &gt;&gt;=)</h3>
+						<p>This is a function that takes an element of the monadic class
+							and an aribtrary function from the base class to the monadic
+							class, and produces another element of the monadic class.</p>
+						<ul>
+							<li>In object-oriented languages, this can be a method on the
+								class of the monadic type.
+							</li>
+							<li>
+								In the previous example, this function "applies the escaping"
+								to the original String.
+							</li>
 					</section>
+
+
 					<section>
+						<h3>Monadic Rules -- Neutral Element</h3>
+						<p>It is a requirement of monads <code>unit</code> be a neutral
+							element of <code>flatMap</code></p>
+							<pre><code class="scala" data-trim>
+m.flatMap(unit) == m // For all monadic type m
+unit(x).flatMap(f) = f(x)
+	// For all base elements x and
+	// functions f
+							</code></pre>
 					</section>
+
+					<section>
+						<h3>Monadic Rules -- Associativity</h3>
+						<p>It is also a requirement that <code>flatMap</code> be
+							associative when applied successively.
+							<pre><code class="scala" data-trim>
+m.flatMap(f).flatMap(g) == m.flatMap(x => f(x).flatMap(g))
+							</code></pre>
+					</section>
+
+					<section>
+						<h3>Monadic For Comprehensions</h3>
+						<p>Scalas for syntax (inspired by Haskells do syntax) allows
+							for easy composition of monadic calculations in an intuitive
+							form
+						</p>
+						<pre><code class="scala" data-trim>
+for {
+  x <- monadicCalculation1()
+  y <- monadicCalculation2(x)
+  z <- monadicCalculation3(x, y)
+} yield z
+
+// is the same as:
+
+monadicCalculation1().flatMap(
+  x -> monadicCalculation2(x).flatMap(
+  y -> monadicCalculation3(x, y))
+						</code></pre>
+					</section>
+
+					<section>
+						Using this syntax, the previous example could be written as
+						<pre><code class="scala" data-trim>
+val result = for {
+  x <- s
+  y <- escapeForHtml(x)
+} yield y
+						</code></pre>
+					</section>
+
 					<section>
 					</section>
 					<section>
